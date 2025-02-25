@@ -1,0 +1,67 @@
+.widgetlg{
+    font-family:'Courier New', Courier, monospace;
+    flex: 2;
+    margin: 20px;
+    padding: 20px;
+    background-color: black;
+    color: rgb(201, 255, 22);
+    border-radius: 10px;
+    box-shadow: rgba(8, 251, 32, 0.288) 0px 4px 12px;
+}
+
+.widgetLgButton{
+    background-color: black;
+}
+
+.widgetLgButton.approved{
+    color: green;
+    background-color: black;
+}
+
+.widgetLgButton.declined{
+    color: red;
+    background-color: black;
+}
+
+.widgetLgButton.pending{
+    color: blue;
+    background-color: black;
+}
+
+.widgetLgTable{
+    width: 100%;
+    border-spacing: 20px;
+}
+
+.widgetLgTh{
+    text-align: left;
+}
+
+.widgetLgTr{
+    color:rgb(201, 255, 22)
+}
+
+.widgetLgTitle{
+    font-size:22px;
+    font-weight: 600;
+    margin: 0;
+    padding: 0;
+}
+
+.widgetLgUser{
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
+
+.widgetLgName{
+    margin-left: 10px;
+}
+
+.widgetLgImg{
+    width:40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+

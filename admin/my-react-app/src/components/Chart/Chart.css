@@ -1,0 +1,13 @@
+.Chart{
+    font-family: 'Courier New', Courier, monospace;
+    margin: 20px;
+    padding: 20px;
+    background-color: black;
+    color: rgb(201, 255, 22);
+    border-radius: 10px;
+    box-shadow: rgba(8, 251, 32, 0.288) 0px 4px 12px;
+}
+
+.chartTitle{
+    margin-bottom: 20px;
+}
