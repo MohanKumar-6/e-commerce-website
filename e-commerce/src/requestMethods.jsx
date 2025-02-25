@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const BASE_URL = "http://localhost:5000/api/"
+const BASE_URL = "https://mantra-ctf5.onrender.com/api/"
 const persistedRoot = localStorage.getItem("persist:root");
 
 let TOKEN = null;
