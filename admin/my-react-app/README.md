@@ -9,8 +9,3 @@ Currently, two official plugins are available:
 
 cloudinary
 
-cloudname: due8vzqzt
-API key : 761734633549233
-API SECRET KEY: 6BW_AhQfni82wTtGbsWj2DtawIU
-
-API env variable: CLOUDINARY_URL=cloudinary://<your_api_key>:<your_api_secret>@due8vzqzt
