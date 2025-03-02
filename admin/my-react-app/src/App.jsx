@@ -17,8 +17,6 @@ function App() {
   const currentUser = useSelector((state) => state.user?.currentUser || {});
   const isAdmin = currentUser.isAdmin || false;
   
-
-
   return (
     <Router>
       <Switch>

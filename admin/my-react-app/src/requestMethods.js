@@ -1,7 +1,8 @@
 import axios from "axios";
 
 
-const BASE_URL = "https://mantra-ctf5.onrender.com/api/"
+// const BASE_URL = "https://mantra-ctf5.onrender.com/api/"
+const BASE_URL = "http://localhost:5000/api/"
 // const TOKEN = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user).currentUser.accessToken
 
 const persistedRoot = localStorage.getItem("persist:root");
