@@ -42,6 +42,11 @@ const Price = styled.span`
     font-weight: 100;
     font-size: 40px;
 `
+const ProductDescription = styled.div`
+    margin-top: 40px;
+    font-weight: 300;
+`
+
 const FilterContainer = styled.div`
     width:50%;
     margin: 30px 0px;
@@ -142,6 +147,8 @@ const Product = () => {
         dispatch(addProduct({...product, quantity, color, size }))
     }
 
+
+
     return (
         <Container>
             <Navbar />
@@ -184,6 +191,15 @@ const Product = () => {
                         </AmountContainer>
                         <Button onClick ={handleClick}>ADD TO CART</Button>
                     </AddContainer>
+                    <ProductDescription>
+                        <h3>Details</h3>
+                        <span><p>Fit: {product.details?.fit}</p></span> 
+                        <span><p>Material&Care: {product.details?.materialAndCare}</p></span> 
+                        <span><p>Sleeve Length: {product.details?.sleeveLength}</p></span> 
+                        <span><p>Collar: {product.details?.collar}</p></span> 
+                        <span><p>Pattern: {product.details?.pattern}</p></span> 
+                        <span><p>Occasion: {product.details?.occasion}</p></span> 
+                    </ProductDescription>
                 </InfoContainer>
             </Wrapper>
             <Newsletter />

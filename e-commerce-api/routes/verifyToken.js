@@ -26,7 +26,9 @@ const verifyTokenAndAuthorization = (req, res, next) => {
 
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
-    
+    if (!req.user) {
+      return res.status(401).json("User not authenticated!");
+    }
     if (req.user.isAdmin) {
       next();
     } else {

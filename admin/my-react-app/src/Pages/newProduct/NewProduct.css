@@ -19,8 +19,29 @@
     margin-bottom: 10px;
 }
 
-.addProductItem > input{
+.addProductItem > input{    
     padding: 10px;
+}
+
+.details > label:first-child {
+    color: gray;
+    font-size: 18px; /* Make the "Details" label bigger */
+    font-weight: bold; /* Emphasize the main label */
+    padding-bottom: 10px;
+}
+
+.details label:not(:first-child) {
+    display: block;
+    padding-left: 90px; /* Indent sub-labels */
+    margin-bottom: 8px;
+}
+
+.details input {
+    margin-bottom: 8px;
+    padding: 10px;
+    margin-left: 90px; /* Indent inputs */
+    width: 100%; /* Ensure consistent width */
+    max-width: 300px; /* Optional: Adjust as needed */
 }
 
 .addProductItem > select{

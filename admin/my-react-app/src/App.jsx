@@ -14,11 +14,9 @@ import Login from './Pages/login/Login';
 
 
 function App() {
-  const currentUser = useSelector((state) => state.user.currentUser)
-
-  const isAdmin = currentUser?.isAdmin || false
-
-  console.log("isAdmine:",isAdmin)
+  const currentUser = useSelector((state) => state.user?.currentUser || {});
+  const isAdmin = currentUser.isAdmin || false;
+  
 
 
   return (
