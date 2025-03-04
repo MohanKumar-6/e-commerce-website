@@ -1,7 +1,7 @@
 export const sliderItems = [
     {
       id: 1,
-      img: "https://i.ibb.co/XsdmR2c/1.png",
+      img: "https://res.cloudinary.com/due8vzqzt/image/upload/v1741036112/a3d790d0834d81d2a1dd470c937f060153bc1549_ylplpp.avif",
       title: "SUMMER SALE",
       desc: "DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.",
       bg: "f5fafd",
@@ -16,8 +16,8 @@ export const sliderItems = [
     {
       id: 3,
       img: "https://i.ibb.co/cXFnLLV/3.png",
-      title: "LOUNGEWEAR LOVE",
-      desc: "DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.",
+      title: "WINTER ESSENTIALS",
+      desc: "ELEVATE YOUR WARDROBE! ENJOY A FLAT 30% OFF ON FRESH ARRIVALS.",
       bg: "fbf0f4",
     },
   ];
@@ -31,15 +31,15 @@ export const sliderItems = [
     },
     {
       id: 2,
-      img: "https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
-      title: "LOUNGEWEAR LOVE",
+      img: "images/8ed0705c55574e61e2d81345c131c500458c7154.avif",
+      title: "HOODIES",
       cat: "coat"
     },
     {
       id: 3,
-      img: "https://images.pexels.com/photos/5480696/pexels-photo-5480696.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
-      title: "LIGHT JACKETS",
-      cat: "jacket"
+      img: "images/bc22b7bbcf74913c8a10d944614fa36bac0c4d90.avif",
+      title: "JEANS",
+      cat: "jeans"
     },
   ];
 

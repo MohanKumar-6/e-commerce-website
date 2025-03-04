@@ -21,7 +21,10 @@ const Wrapper = styled.div`
 `
 const ImgContainer = styled.div`
     flex: 1;
-`
+    border-radius: 10px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+`;
+
 const Image = styled.img`
     width: 100%;
     height: 90vh;
@@ -33,7 +36,7 @@ const InfoContainer = styled.div`
     padding: 0px 50px;
 `
 const Title = styled.h1`
-    font-weight: 200;
+    font-weight: 700;
 `
 const Desc = styled.p`
     margin: 20px 0px;
@@ -138,14 +141,17 @@ const Product = () => {
             try{
                 const res = await publicRequest.get("/products/find/"+id)
                 setProduct(res.data)
+
             }catch{}
         }
         getProduct()
+        window.scrollTo(0, 0);
     }, [id])
 
     const handleClick = () => {
         dispatch(addProduct({...product, quantity, color, size }))
     }
+
 
 
 

@@ -1,8 +1,12 @@
 import { Search, ShoppingCartOutlined } from '@material-ui/icons';
 import {Badge}  from '@material-ui/core';
 import styled from 'styled-components';
+import {useState} from "react"
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Menu, MenuItem, IconButton, Avatar } from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { persistor } from "../../src/redux/store"; 
 
 
 const Container = styled.div`
@@ -53,6 +57,11 @@ const Center = styled.div`
     flex: 1;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
+`;
+
 const Right = styled.div`
     flex: 1;
     display: flex;
@@ -61,6 +70,21 @@ const Right = styled.div`
 
 const Navbar = () => {
     const quantity = useSelector(state => state.cart.quantity)
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        persistor.purge()
+        handleClose();
+        window.location.reload()
+    }
 
     return (
         <Container>
@@ -73,22 +97,38 @@ const Navbar = () => {
                     </SearchContainer>
                 </Left>
                 <Center>
-                    <Logo>MANTRA.</Logo>
+                    <StyledLink to="/">
+                        <Logo>MANTRA.</Logo>
+                    </StyledLink>
                 </Center>
                 <Right>
-                    <Link to="/register">
+                    <StyledLink to="/register">
                     <MenuItems>REGISTER</MenuItems>
-                    </Link>
-                    <Link to="/login">
+                    </StyledLink>
+                    <StyledLink to="/login">
                     <MenuItems>SIGN IN</MenuItems>
-                    </Link>
+                    </StyledLink>
                     <Link to="/cart">
                         <MenuItems>
                             <Badge badgeContent={quantity} color="primary">
                                 <ShoppingCartOutlined/>
                             </Badge>
-                        </MenuItems>
+                        </MenuItems>    
                     </Link>
+                    <AccountCircleIcon style={{ fontSize: '2rem', marginTop: "-7px", marginLeft: "20px", padding: "0"}} onClick={handleClick}/>
+                    <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                        }}
+                    >
+                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleClose}>My account</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </Menu>
                 </Right>
             </Wrapper>
         </Container>

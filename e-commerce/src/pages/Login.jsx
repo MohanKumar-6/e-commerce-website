@@ -7,10 +7,10 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
+      rgba(255, 255, 255, 0.13),
+      rgba(255, 255, 255, 0.25)
     ),
-    url("https://images.pexels.com/photos/6984650/pexels-photo-6984650.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940")
+    url("images/3907c41616c1bdec6a582573b1915b86.jpg")
       center;
   background-size: cover;
   display: flex;
@@ -21,11 +21,17 @@ const Container = styled.div`
 const Wrapper = styled.div`
   width: 25%;
   padding: 20px;
-  background-color: white;
+  color: white;
+  backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
+    background-color: rgba(17, 25, 40, 0.44);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.125);
+  border-radius: 30px;
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 300;
 `;
 
@@ -40,6 +46,15 @@ const Input = styled.input`
   margin: 10px 0;
   padding: 10px;
 `;
+
+const Logo = styled.div`
+  font-family: "Playwrite GB S", cursive;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+`
 
 const Button = styled.button`
   width: 40%;
@@ -80,6 +95,7 @@ const Login = () => {
     return(
         <Container>
             <Wrapper>
+                <Logo>Mantra</Logo>
                 <Title>SIGN IN</Title>
                 <Form>
                     <Input placeholder="username" onChange={(e)=>{setUsername(e.target.value)}}/> 

@@ -18,15 +18,25 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <Routes>
-          <Route exact path="/" Component={Home}/>
-          <Route path="/products/:category" Component={ProductList}/>
-          <Route path="/product/:id" Component={Product}/>
-          <Route path="/register" element={user? <Navigate to="/" />: <Register/>} />
-          <Route path="/login" element={user? <Navigate to="/" />: <Login/>} />
-          <Route path="/cart" Component={Cart}/>
-          <Route path="/success" Component={Success}/>
-        </Routes>
+        {user ? (
+          <>
+            <Routes>
+              <Route exact path="/" Component={Home}/>
+              <Route path="/products/:category" Component={ProductList}/>
+              <Route path="/product/:id" Component={Product}/>
+              <Route path="/register" element={user? <Navigate to="/" />: <Register/>} />
+              <Route path="/login" element={user? <Navigate to="/" />: <Login/>} />
+              <Route path="/cart" Component={Cart}/>
+              <Route path="/success" Component={Success}/>
+            </Routes>
+        </>
+      ): (
+      <Routes>
+         <Route path="/login" element={<Login />} />
+         <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+      )}
+        
       </Router>
     </div>
   );

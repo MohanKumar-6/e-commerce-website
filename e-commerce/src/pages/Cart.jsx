@@ -58,17 +58,24 @@ const Info = styled.div`
 `;
 
 const Product = styled.div`
+  margin-right: 40px;
+  colour: rgba(91, 90, 93, 0.96);
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
   display: flex;
   justify-content: space-between;
 `;
 
 const ProductDetail = styled.div`
+  font-size: 24px;
   flex: 2;
   display: flex;
 `;
 
 const Image = styled.img`
   width: 200px;
+  border-radius: 10px;
+  object-fit: cover;
 `;
 
 const Details = styled.div`
@@ -155,6 +162,7 @@ const Button = styled.button`
 
 const Cart = () => {
   const cart = useSelector(state => state.cart)
+  const [quantity, setQuantity] = useState(cart.products)
   const [stripeToken, setStripeToken] = useState(null)
   const navigate = useNavigate()
 
@@ -162,6 +170,15 @@ const Cart = () => {
     setStripeToken(token)
     console.log(token.id)
   }
+
+  const handleQuantity = (event) => {
+    if (event === "dec"){
+        quantity > 1 && setQuantity( quantity - 1)
+    }else{
+        setQuantity(quantity + 1)
+    }
+
+}
 
   useEffect(() => {
     const makeRequest = async () => {
@@ -214,11 +231,11 @@ console.log(cart)
               </ProductDetail>
               <PriceDetail>
                 <ProductAmountContainer>
-                  <Add />
+                  <Add onClick={() => handleQuantity("inc")}/>
                   <ProductAmount>{product.quantity}</ProductAmount>
-                  <Remove />
+                  <Remove onClick={() => handleQuantity("dec")}/>
                 </ProductAmountContainer>
-                <ProductPrice>{product.price*product.quantity}</ProductPrice>
+                <ProductPrice>₹{product.price*product.quantity}</ProductPrice>
               </PriceDetail>
               <Hr />
             </Product>

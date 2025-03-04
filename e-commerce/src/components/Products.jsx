@@ -1,7 +1,6 @@
 import styled from "styled-components"
 import { publicRequest } from "../requestMethods";
 import Product from "./Product"
-import axios from "axios"
 import { useEffect, useState } from "react";
 
 const Container = styled.div`
@@ -41,7 +40,7 @@ const Products = ({ cat, filters, sort }) => {
         <Container>
             { cat ? filteredProducts.map((item) => 
                 <Product item={item} key={item.id} />)
-                : products.slice(0,8).map((item) =>  
+                : products.slice(0,10).map((item) =>  
                 <Product item={item} key={item.id} />)
             }
         </Container>
