@@ -27,7 +27,7 @@ function App() {
               <Sidebar />
               <Switch>
                 <Route exact path="/" component={Home} />
-                <Route path="/users" component={UserList} />
+                <Route path="/users" (component={UserList} />
                 <Route path="/user/:userId" component={User} />
                 <Route path="/newUser" component={NewUser} />
                 <Route path="/products" component={ProductList} />
