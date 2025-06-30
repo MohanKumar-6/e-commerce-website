@@ -334,9 +334,6 @@ const ProductDescription = styled.div`
   }
 `;
 
-// ...rest of your Product component remains unchanged...
-
-// Component
 const Product = () => {
   const location = useLocation();
   const id = location.pathname.split("/")[2];
@@ -406,7 +403,6 @@ const Product = () => {
             </Arrow>
           </ImgContainer>
 
-          {/* Thumbnail Images */}
           {product.images?.length > 1 && (
             <ThumbnailContainer>
               {product.images.map((image, index) => (

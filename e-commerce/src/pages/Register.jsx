@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
 import { publicRequest } from "../requestMethods";
-import Navbar from "../components/Navbar";
 
 const Container = styled.div`
   width: 100vw;
@@ -157,7 +156,6 @@ const Register = () => {
             alert("Passwords do not match!");
             return;
         }
-        // Here you would typically send the data to your backend
         const registerAccount = async () => {
             const res = publicRequest.post('/auth/register', {
                 firstName,
@@ -169,7 +167,6 @@ const Register = () => {
             res.then(response => {
                 if (response.status === 201) {
                     alert("Account created successfully!");
-                    // Redirect to login or home page
                 }
             }).catch(error => {
                 console.error("Error creating account:", error);

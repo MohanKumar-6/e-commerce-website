@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { publicRequest } from "../requestMethods"; // Axios instance
-import Product from "../components/Product"; // Your product card component
+import { publicRequest } from "../requestMethods";
+import Product from "../components/Product";
 
 const SearchResults = () => {
   const location = useLocation();

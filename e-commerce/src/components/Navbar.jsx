@@ -1,4 +1,4 @@
-import { Search, ShoppingCartOutlined } from '@material-ui/icons';
+import { Search, ShoppingCartOutlined, Menu as MenuIcon, Close } from '@material-ui/icons';
 import { Badge } from '@material-ui/core';
 import styled from 'styled-components';
 import { useState, useEffect } from "react"
@@ -10,37 +10,34 @@ import { persistor } from "../../src/redux/store";
 import { publicRequest } from "../../src/requestMethods";
 
 const Container = styled.div`
-    height: 80px;
+    width: 100%;
+    min-width: 0;
+    height: 64px;
     position: sticky;
     top: 0;
-    z-index: 1000;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+    z-index: 1002;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid #f9a8d4;
+    box-shadow: 0 2px 12px rgba(255, 107, 157, 0.07);
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
         height: 60px;
     }
 `;
 
 const Wrapper = styled.div`
-    padding: 15px 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 100%;
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
 
-    @media (max-width: 900px) {
-        padding: 10px 16px;
-    }
-    @media (max-width: 600px) {
-        flex-direction: column;
-        align-items: center; // changed from stretch to center
-        padding: 6px 4vw;
-        gap: 6px;
+    @media (max-width: 768px) {
+        padding: 0 12px;
+        position: relative;
     }
 `;
 
@@ -48,66 +45,84 @@ const Left = styled.div`
     display: flex;
     align-items: center;
     flex: 1;
-    justify-content: flex-start;
+    min-width: 0;
 
-    @media (max-width: 600px) {
-        justify-content: center;
-        width: 100%;
+    @media (max-width: 768px) {
+        flex: 0 0 auto;
+        order: 1;
     }
 `;
 
-const Logo = styled.div`
+const Logo = styled(Link)`
     font-weight: 700;
-    font-size: 28px;
+    font-size: 1.5rem;
     background: linear-gradient(135deg, #ff6b9d, #c44569);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    text-fill-color: transparent;
+    text-decoration: none;
     cursor: pointer;
-    transition: all 0.3s ease;
-    
+    letter-spacing: 1px;
+    transition: all 0.3s;
+
     &:hover {
-        transform: scale(1.05);
+        transform: scale(1.04);
     }
 
-    @media (max-width: 600px) {
-        font-size: 20px;
+    @media (max-width: 768px) {
+        font-size: 1.2rem;
+        letter-spacing: 0.5px;
+    }
+`;
+
+const Center = styled.div`
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    position: relative;
+
+    @media (max-width: 768px) {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid #f9a8d4;
+        padding: 8px 12px;
+        z-index: 1001;
+        transform: ${props => props.showSearch ? 'translateY(0)' : 'translateY(-100%)'};
+        opacity: ${props => props.showSearch ? '1' : '0'};
+        visibility: ${props => props.showSearch ? 'visible' : 'hidden'};
+        transition: all 0.3s ease;
+        order: 4;
     }
 `;
 
 const SearchContainer = styled.div`
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 25px;
-    padding: 10px 20px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    min-width: 300px;
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        border-color: rgba(255, 255, 255, 0.4);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    &:focus-within {
-        background: rgba(255, 255, 255, 0.35);
-        border-color: #ff6b9d;
-        box-shadow: 0 6px 25px rgba(255, 107, 157, 0.2);
-    }
+    background: #fff;
+    border: 1.5px solid #f9a8d4;
+    border-radius: 22px;
+    padding: 6px 14px;
+    width: 100%;
+    max-width: 340px;
+    min-width: 0;
+    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.07);
 
     @media (max-width: 900px) {
-        min-width: 180px;
-        padding: 7px 12px;
+        max-width: 220px;
+        padding: 5px 10px;
     }
-    @media (max-width: 600px) {
-        min-width: unset;
-        width: 100%;
-        padding: 5px 8px;
-        margin: 0 auto;
+    
+    @media (max-width: 768px) {
+        max-width: 100%;
+        padding: 8px 12px;
+        border-radius: 20px;
     }
 `;
 
@@ -118,152 +133,215 @@ const Input = styled.input`
     outline: none;
     font-size: 14px;
     color: #333;
-    
+    min-width: 0;
+
     &::placeholder {
-        color: rgba(51, 51, 51, 0.6);
+        color: #b3005e99;
     }
 
-    @media (max-width: 600px) {
-        font-size: 12px;
+    @media (max-width: 768px) {
+        font-size: 16px; /* Prevents zoom on iOS */
     }
 `;
 
 const SearchIcon = styled(Search)`
-    color: #666;
+    color: #b3005e;
     cursor: pointer;
-    transition: color 0.3s ease;
-    
+    margin-left: 4px;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+
     &:hover {
         color: #ff6b9d;
+    }
+`;
+
+const Dropdown = styled.div`
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(255, 107, 157, 0.08);
+    z-index: 999;
+    max-height: 180px;
+    overflow-y: auto;
+    font-size: 13px;
+
+    @media (max-width: 768px) {
+        top: calc(100% + 4px);
+        border-radius: 12px;
+        max-height: 200px;
+    }
+`;
+
+const DropdownItem = styled.div`
+    padding: 8px 14px;
+    cursor: pointer;
+    color: #b3005e;
+    border-bottom: 1px solid #ffeef8;
+    transition: background 0.2s;
+
+    &:hover {
+        background: #ffeef8;
+        color: #ff6b9d;
+    }
+    &:last-child {
+        border-bottom: none;
+    }
+
+    @media (max-width: 768px) {
+        padding: 12px 16px;
+        font-size: 14px;
     }
 `;
 
 const Right = styled.div`
     flex: 1;
     display: flex;
+    align-items: center;
     justify-content: flex-end;
-    align-items: center; // ensure vertical centering
-    gap: 25px;
+    gap: 18px;
+    min-width: 0;
 
-    @media (max-width: 900px) {
-        gap: 12px;
-    }
-    @media (max-width: 600px) {
-        justify-content: center;
-        gap: 10px;
-        margin-top: 0; // remove margin
-        width: 100%;
+    @media (max-width: 768px) {
+        flex: 0 0 auto;
+        gap: 8px;
+        order: 3;
     }
 `;
 
-const MenuItems = styled.div`
+const MobileControls = styled.div`
+    display: none;
+    
+    @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        order: 2;
+        flex: 1;
+        justify-content: center;
+    }
+`;
+
+const SearchToggle = styled.button`
+    display: none;
+    
+    @media (max-width: 768px) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border: 1.5px solid #f9a8d4;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        transition: all 0.3s;
+        
+        &:hover {
+            background: #ffeef8;
+            border-color: #ff6b9d;
+        }
+        
+        .search-icon {
+            color: #b3005e;
+            font-size: 1.1rem;
+        }
+    }
+`;
+
+const MenuItems = styled(Link)`
     font-size: 14px;
     font-weight: 500;
+    color: #b3005e;
+    text-decoration: none;
+    margin: 0 2px;
+    transition: color 0.2s;
     cursor: pointer;
-    color: #333;
-    transition: all 0.3s ease;
-    position: relative;
-    
+
     &:hover {
         color: #ff6b9d;
-        transform: translateY(-2px);
-    }
-    
-    &::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: -5px;
-        left: 50%;
-        background: linear-gradient(135deg, #ff6b9d, #c44569);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-    }
-    
-    &:hover::after {
-        width: 100%;
     }
 
-    @media (max-width: 600px) {
-        font-size: 12px;
+    @media (max-width: 768px) {
+        display: none;
     }
-`;
-
-const StyledLink = styled(Link)`
-    text-decoration: none;
-    color: inherit;
 `;
 
 const CartIcon = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #fff;
+    border: 1.5px solid #f9a8d4;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
+    width: 36px;
+    height: 36px;
+    transition: all 0.3s;
     cursor: pointer;
-    
+
     &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
-        box-shadow: 0 4px 15px rgba(255, 107, 157, 0.2);
+        background: #ffeef8;
+        border-color: #ff6b9d;
     }
 
-    @media (max-width: 600px) {
-        width: 32px;
-        height: 32px;
+    @media (max-width: 768px) {
+        width: 36px;
+        height: 36px;
     }
 `;
 
 const ProfileIcon = styled(AccountCircleIcon)`
     && {
-        font-size: 2.2rem;
-        color: #666;
+        font-size: 2rem;
+        color: #b3005e;
         cursor: pointer;
-        transition: all 0.3s ease;
-        background: rgba(255, 255, 255, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: #fff;
+        border: 1.5px solid #f9a8d4;
         border-radius: 50%;
-        padding: 8px;
-        backdrop-filter: blur(10px);
-        
+        padding: 4px;
+        transition: all 0.3s;
+
         &:hover {
             color: #ff6b9d;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.2);
+            background: #ffeef8;
+            border-color: #ff6b9d;
         }
 
-        @media (max-width: 600px) {
-            font-size: 1.4rem;
-            padding: 4px;
+        @media (max-width: 768px) {
+            font-size: 1.6rem;
+            padding: 6px;
         }
     }
 `;
 
 const StyledMenu = styled(Menu)`
     .MuiPaper-root {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(255, 107, 157, 0.13);
         margin-top: 10px;
+        
+        @media (max-width: 768px) {
+            min-width: 160px;
+            margin-top: 8px;
+        }
     }
-    
     .MuiMenuItem-root {
         font-weight: 500;
-        color: #333;
-        transition: all 0.3s ease;
+        color: #b3005e;
+        transition: all 0.3s;
         
         &:hover {
-            background: rgba(255, 107, 157, 0.1);
+            background: #ffeef8;
             color: #ff6b9d;
+        }
+        
+        @media (max-width: 768px) {
+            padding: 12px 16px;
+            font-size: 14px;
         }
     }
 `;
@@ -271,76 +349,25 @@ const StyledMenu = styled(Menu)`
 const AuthSection = styled.div`
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
+
+    @media (max-width: 768px) {
+        display: none;
+    }
 `;
 
-const Dropdown = styled.div`
-  position: absolute;
-  top: 105%;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  max-height: 250px;
-  overflow-y: auto;
-  z-index: 999;
-  scrollbar-width: thin;
-  scrollbar-color: #ff6b9d transparent;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: #ff6b9d;
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 12px;
-    max-height: 180px;
-  }
-`;
-
-const DropdownItem = styled.div`
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-
-  &:hover {
-    background: rgba(255, 107, 157, 0.1);
-    color: #ff6b9d;
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 12px;
-    padding: 8px 10px;
-  }
-`;
-
-const Center = styled.div`
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center; // ensure vertical centering
-    position: relative;
-    margin-bottom: 0; // remove margin
-
-    @media (max-width: 600px) {
-        margin-top: 2px;
-        width: 100%;
+const MobileOverlay = styled.div`
+    display: none;
+    
+    @media (max-width: 768px) {
+        display: ${props => props.show ? 'block' : 'none'};
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.2);
+        z-index: 1000;
     }
 `;
 
@@ -348,8 +375,9 @@ const Navbar = () => {
     const quantity = useSelector(state => state.cart.quantity);
     const user = useSelector(state => state.user.currentUser);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [showMobileSearch, setShowMobileSearch] = useState(false);
     const navigate = useNavigate();
-    
+
     const [searchTerm, setSearchTerm] = useState("");
     const [allProducts, setAllProducts] = useState([]);
     const [filtered, setFiltered] = useState([]);
@@ -372,13 +400,11 @@ const Navbar = () => {
             setShowDropdown(false);
             return;
         }
-
         const matches = allProducts.filter((p) =>
             p.tags?.some((tag) =>
                 tag.toLowerCase().includes(term)
             )
         );
-
         setFiltered(matches);
         setShowDropdown(true);
     }, [searchTerm, allProducts]);
@@ -386,6 +412,7 @@ const Navbar = () => {
     const handleSearch = () => {
         if (searchTerm.trim()) {
             navigate(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
+            setShowMobileSearch(false);
         }
     };
 
@@ -408,89 +435,112 @@ const Navbar = () => {
         window.location.reload();
     };
 
+    const toggleMobileSearch = () => {
+        setShowMobileSearch(!showMobileSearch);
+        if (showMobileSearch) {
+            setSearchTerm("");
+            setShowDropdown(false);
+        }
+    };
+
+    // Close mobile search when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (showMobileSearch && !event.target.closest('[data-search-container]')) {
+                setShowMobileSearch(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [showMobileSearch]);
+
     return (
-        <Container>
-            <Wrapper>
-                <Left>
-                    <StyledLink to="/">
-                        <Logo>Deccan Threads</Logo>
-                    </StyledLink>
-                </Left>
-
-                <Center>
-                    <SearchContainer>
-                        <Input
-                            placeholder="Search products..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onFocus={() => {
-                                if (filtered.length > 0) setShowDropdown(true);
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") handleSearch();
-                            }}
-                        />
-                        <SearchIcon onClick={handleSearch} />
-                    </SearchContainer>
-
-                    {showDropdown && filtered.length > 0 && (
-                        <Dropdown>
-                            {filtered.slice(0, 6).map((product) => (
-                                <DropdownItem
-                                    key={product._id}
-                                    onClick={() => {
-                                        navigate(`/product/${product._id}`);
-                                        setSearchTerm("");
-                                        setShowDropdown(false);
-                                    }}
-                                >
-                                    {product.title}
-                                </DropdownItem>
-                            ))}
-                        </Dropdown>
-                    )}
-                </Center>
-
-                <Right>
-                    <AuthSection>
-                        {!user && (
-                            <>
-                                <StyledLink to="/register">
-                                    <MenuItems>REGISTER</MenuItems>
-                                </StyledLink>
-                                <StyledLink to="/login">
-                                    <MenuItems>SIGN IN</MenuItems>
-                                </StyledLink>
-                            </>
+        <>
+            <Container>
+                <Wrapper>
+                    <Left>
+                        <Logo to="/">Deccan Threads</Logo>
+                    </Left>
+                    
+                    <MobileControls>
+                        <SearchToggle onClick={toggleMobileSearch}>
+                            <Search className="search-icon" />
+                        </SearchToggle>
+                    </MobileControls>
+                    
+                    <Center showSearch={showMobileSearch} data-search-container>
+                        <SearchContainer>
+                            <Input
+                                placeholder="Search products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onFocus={() => {
+                                    if (filtered.length > 0) setShowDropdown(true);
+                                }}
+                                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") handleSearch();
+                                }}
+                            />
+                            <SearchIcon onClick={handleSearch} />
+                        </SearchContainer>
+                        {showDropdown && filtered.length > 0 && (
+                            <Dropdown>
+                                {filtered.slice(0, 6).map((product) => (
+                                    <DropdownItem
+                                        key={product._id}
+                                        onClick={() => {
+                                            navigate(`/product/${product._id}`);
+                                            setSearchTerm("");
+                                            setShowDropdown(false);
+                                            setShowMobileSearch(false);
+                                        }}
+                                    >
+                                        {product.title}
+                                    </DropdownItem>
+                                ))}
+                            </Dropdown>
                         )}
-                    </AuthSection>
-
-                    <Link to="/cart">
-                        <CartIcon>
-                            <Badge badgeContent={quantity} color="primary">
-                                <ShoppingCartOutlined style={{ color: '#666' }} />
-                            </Badge>
-                        </CartIcon>
-                    </Link>
-
-                    <ProfileIcon onClick={handleClick} />
-
-                    <StyledMenu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                        <MenuItem onClick={handleClose}>My account</MenuItem>
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </StyledMenu>
-                </Right>
-            </Wrapper>
-        </Container>
+                    </Center>
+                    
+                    <Right>
+                        <AuthSection>
+                            {!user && (
+                                <>
+                                    <MenuItems to="/register">REGISTER</MenuItems>
+                                    <MenuItems to="/login">SIGN IN</MenuItems>
+                                </>
+                            )}
+                        </AuthSection>
+                        <Link to="/cart">
+                            <CartIcon>
+                                <Badge badgeContent={quantity} color="primary">
+                                    <ShoppingCartOutlined style={{ color: '#b3005e' }} />
+                                </Badge>
+                            </CartIcon>
+                        </Link>
+                        <ProfileIcon onClick={handleClick} />
+                        <StyledMenu
+                            id="basic-menu"
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                            MenuListProps={{
+                                'aria-labelledby': 'basic-button',
+                            }}
+                        >
+                            <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                            <MenuItem onClick={handleClose}>My account</MenuItem>
+                            {!user && <MenuItem onClick={() => {handleClose(); navigate('/login');}}>Sign In</MenuItem>}
+                            {!user && <MenuItem onClick={() => {handleClose(); navigate('/register');}}>Register</MenuItem>}
+                            {user && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
+                        </StyledMenu>
+                    </Right>
+                </Wrapper>
+            </Container>
+            <MobileOverlay show={showMobileSearch} onClick={() => setShowMobileSearch(false)} />
+        </>
     );
 };
 

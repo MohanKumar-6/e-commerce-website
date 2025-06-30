@@ -13,7 +13,6 @@ import { updateQuantity } from "../redux/cartRedux";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
-// Styled components with pastel glass theme
 const Container = styled.div`
  
 `;

@@ -11,6 +11,7 @@ const Container = styled.div`
   flex-direction: column;
   border-radius: 20px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 `;
 
 const Title = styled.h1`

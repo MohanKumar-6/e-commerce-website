@@ -4,10 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/apiCalls";
 import { Link } from "react-router-dom";
 
-// Make sure to import this in your index.html or via styled-components `createGlobalStyle`
-
-// ...existing imports...
-
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -156,7 +152,6 @@ const Error = styled.span`
   }
 `;
 
-// ...rest of your Login component remains unchanged...
 
 const Login = () => {
   const [username, setUsername] = useState("");

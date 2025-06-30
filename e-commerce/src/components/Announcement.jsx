@@ -12,6 +12,7 @@ const Container = styled.div`
   letter-spacing: 1px;
   width: 100%;
   text-align: center;
+  overflow-x: hidden;
 
   @media (max-width: 600px) {
     font-size: 12px;

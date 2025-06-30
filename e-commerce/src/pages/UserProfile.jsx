@@ -126,10 +126,8 @@ const EditButton = styled.button`
 `;
 
 const UserProfile = () => {
-  // Get user data from Redux
   const user = useSelector((state) => state.user.currentUser);
 
-  // Fallbacks if user is not logged in
   if (!user) {
     return (
       <Container>

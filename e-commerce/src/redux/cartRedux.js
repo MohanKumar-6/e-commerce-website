@@ -14,11 +14,9 @@ const cartSlice = createSlice({
       );
 
       if (existingProduct) {
-        // Just increase quantity and total
         existingProduct.quantity += action.payload.quantity;
         state.total += action.payload.price * action.payload.quantity;
       } else {
-        // New product
         state.products.push(action.payload);
         state.quantity += 1;
         state.total += action.payload.price * action.payload.quantity;
@@ -37,7 +35,6 @@ const cartSlice = createSlice({
         product.quantity -= 1;
         state.total -= product.price;
       } else if (type === "dec" && product.quantity === 1) {
-        // Remove product if quantity reaches 0
         state.products = state.products.filter((p) => p._id !== productId);
         state.quantity -= 1;
         state.total -= product.price;
