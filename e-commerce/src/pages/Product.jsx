@@ -1,217 +1,456 @@
-import { Add, Remove } from "@material-ui/icons"
-import styled from "styled-components"
-import Announcement from "../components/Announcement"
-import Footer from "../components/Footer"
-import Navbar from "../components/Navbar"
-import Newsletter from "../components/Newsletter"
-import { useLocation } from "react-router-dom"
-import { useState, useEffect } from "react"
-import { publicRequest } from "../requestMethods"
-import { addProduct } from "../redux/cartRedux"
-import { useDispatch } from "react-redux"
+import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
+import styled from "styled-components";
+import Announcement from "../components/Announcement";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+import Newsletter from "../components/Newsletter";
+import { useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { publicRequest } from "../requestMethods";
+import { addProduct } from "../redux/cartRedux";
+import { useDispatch } from "react-redux";
 
+// Styled Components
+// ...existing imports...
 
 const Container = styled.div`
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(
+      rgba(255,255,255,0.2),
+      rgba(255,255,255,0.3)
+    ),
+    url("/images/productbg.jpeg") center;
+  background-size: cover;
+`;
 
-`
 const Wrapper = styled.div`
-    padding:50px;
-    display: flex;
+  padding: 60px;
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
 
-`
+  @media (max-width: 900px) {
+    padding: 30px 10px;
+    gap: 20px;
+  }
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 2vw;
+    gap: 10px;
+  }
+`;
+
+const ImageSection = styled.div`
+  flex: 1;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  @media (max-width: 900px) {
+    max-width: 350px;
+  }
+  @media (max-width: 600px) {
+    max-width: 98vw;
+    width: 100%;
+  }
+`;
+
 const ImgContainer = styled.div`
-    flex: 1;
-    border-radius: 10px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+
+  @media (max-width: 600px) {
+    border-radius: 12px;
+    min-height: 220px;
+  }
 `;
 
 const Image = styled.img`
-    width: 100%;
-    height: 90vh;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
 
-`
-const InfoContainer = styled.div`
-    flex:1;
-    padding: 0px 50px;
-`
-const Title = styled.h1`
-    font-weight: 700;
-`
-const Desc = styled.p`
-    margin: 20px 0px;
-`
-const Price = styled.span`
-    font-weight: 100;
-    font-size: 40px;
-`
-const ProductDescription = styled.div`
-    margin-top: 40px;
-    font-weight: 300;
-`
+  @media (max-width: 600px) {
+    border-radius: 12px;
+  }
+`;
 
-const FilterContainer = styled.div`
-    width:50%;
-    margin: 30px 0px;
-    display: flex;
-    justify-content: space-between;
-`
-const Filter = styled.div`
-    display: flex;
-    align-items: center;
-`
-const FilterTitle = styled.span`
-    font-size: 20px;
-    font-weight: 200;
-`
-const FilterColor = styled.div`
-    width: 20px;
-    height: 20px;
-    border-style: solid;
-    border-color: grey;
-    border-width: 1px;
-    border-radius: 50%;
-    background-color: ${(props) => props.color};
-    margin: 0px 5px;
-    cursor: pointer;
-`
-const FilterSize = styled.select`
-    margin-left: 10px;
-    padding: 5px;
-`
+const Arrow = styled.div`
+  position: absolute;
+  top: 45%;
+  ${(props) => props.direction}: 10px;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s;
 
-const FilterSizeOption = styled.option`
-
-`
-const AddContainer = styled.div`
-    width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`
-const AmountContainer = styled.div`
-    display: flex;
-    align-items: center;
-    font-weight:700;
-`
-const Amount = styled.span`
-    width: 30px;
-    height: 30px;
-    border-radius: 10px;
-    border: 1px solid teal;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0px 5px;
-`
-const Button = styled.button`
-    padding: 15px;
-    border: 2px solid teal;
+  &:hover {
     background-color: white;
-    cursor: pointer;
-    font-weight: 500;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
 
-    &:hover{
-        background-color: #f8f4f4;
+  @media (max-width: 600px) {
+    width: 32px;
+    height: 32px;
+  }
+`;
+
+const ThumbnailContainer = styled.div`
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
+
+  @media (max-width: 600px) {
+    gap: 6px;
+    margin-top: 8px;
+  }
+`;
+
+const Thumbnail = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid ${props => props.isActive ? '#ff69b4' : 'rgba(255, 255, 255, 0.3)'};
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+
+  &:hover {
+    border-color: #ff69b4;
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+  }
+
+  @media (max-width: 600px) {
+    width: 48px;
+    height: 48px;
+    border-radius: 7px;
+  }
+`;
+
+const ThumbnailImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`;
+
+const InfoContainer = styled.div`
+  flex: 1;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+
+  @media (max-width: 900px) {
+    padding: 24px;
+    max-width: 95vw;
+  }
+  @media (max-width: 600px) {
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+`;
+
+const Title = styled.h1`
+  font-size: 36px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #222;
+
+  @media (max-width: 600px) {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+`;
+
+const Desc = styled.p`
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 20px;
+  line-height: 1.5;
+
+  @media (max-width: 600px) {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+`;
+
+const Price = styled.span`
+  font-size: 28px;
+  font-weight: 500;
+  color: #333;
+  display: block;
+  margin-bottom: 30px;
+
+  @media (max-width: 600px) {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+`;
+
+const AddContainer = styled.div`
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+`;
+
+const GlassQuantityBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 6px 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  min-width: 140px;
+
+  @media (max-width: 600px) {
+    min-width: 100px;
+    padding: 4px 8px;
+    border-radius: 10px;
+  }
+`;
+
+const QuantityButton = styled.button`
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 600px) {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+`;
+
+const Amount = styled.span`
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  padding: 0 10px;
+
+  @media (max-width: 600px) {
+    font-size: 14px;
+    padding: 0 6px;
+  }
+`;
+
+const Button = styled.button`
+  padding: 12px 28px;
+  background: rgba(255, 192, 203, 0.3);
+  color: #b3005e;
+  border: 1px solid rgba(255, 192, 203, 0.4);
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 192, 203, 0.5);
+    transform: scale(1.03);
+  }
+
+  @media (max-width: 600px) {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 14px;
+  }
+`;
+
+const ProductDescription = styled.div`
+  margin-top: 40px;
+  font-size: 15px;
+  color: #444;
+
+  h3 {
+    margin-bottom: 10px;
+    color: #222;
+  }
+
+  p {
+    margin: 5px 0;
+  }
+
+  @media (max-width: 600px) {
+    margin-top: 18px;
+    font-size: 12px;
+    h3 {
+      font-size: 15px;
     }
-`
+  }
+`;
 
+// ...rest of your Product component remains unchanged...
 
-
+// Component
 const Product = () => {
-    const location = useLocation()
-    const id = location.pathname.split("/")[2];
-    const [product, setProduct] = useState({})
-    const [quantity, setQuantity] = useState(1)
-    const [color, setColor] = useState("")
-    const [size, setSize] = useState("")
-    const dispatch = useDispatch()
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const dispatch = useDispatch();
 
-    const handleQuantity = (event) => {
-        if (event === "dec"){
-            quantity > 1 && setQuantity( quantity - 1)
-        }else{
-            setQuantity(quantity + 1)
-        }
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await publicRequest.get("/products/find/" + id);
+        setProduct(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getProduct();
+    window.scrollTo(0, 0);
+  }, [id]);
 
+  const handleQuantity = (type) => {
+    if (type === "dec" && quantity > 1) {
+      setQuantity(quantity - 1);
+    } else if (type === "inc") {
+      setQuantity(quantity + 1);
     }
+  };
 
-    useEffect(() => {
-        const getProduct = async () => {
-            try{
-                const res = await publicRequest.get("/products/find/"+id)
-                setProduct(res.data)
+  const handleClick = () => {
+    dispatch(addProduct({ ...product, quantity }));
+  };
 
-            }catch{}
-        }
-        getProduct()
-        window.scrollTo(0, 0);
-    }, [id])
-
-    const handleClick = () => {
-        dispatch(addProduct({...product, quantity, color, size }))
+  const nextSlide = () => {
+    if (product.images?.length > 0) {
+      setSlideIndex((prev) => (prev + 1) % product.images.length);
     }
+  };
 
+  const prevSlide = () => {
+    if (product.images?.length > 0) {
+      setSlideIndex((prev) =>
+        prev === 0 ? product.images.length - 1 : prev - 1
+      );
+    }
+  };
 
+  const handleThumbnailClick = (index) => {
+    setSlideIndex(index);
+  };
 
+  return (
+    <Container>
+      <Navbar />
+      <Announcement />
+      <Wrapper>
+        <ImageSection>
+          <ImgContainer>
+            <Arrow direction="left" onClick={prevSlide}>
+              <ArrowBackIos />
+            </Arrow>
+            {product.images?.length > 0 && (
+              <Image src={product.images[slideIndex]} alt={product.title} />
+            )}
+            <Arrow direction="right" onClick={nextSlide}>
+              <ArrowForwardIos />
+            </Arrow>
+          </ImgContainer>
 
-    return (
-        <Container>
-            <Navbar />
-            <Announcement />
-            <Wrapper>
-                <ImgContainer>
-                    <Image src={product.img}/>
-                </ImgContainer>
-                <InfoContainer >
-                    <Title>{product.title}</Title>
-                    <Desc>
-                        {product.desc}
-                    </Desc>
-                    <Price>{`₹${product.price}`}</Price>
-                    <FilterContainer>
-                        <Filter>
-                            <FilterTitle>Color</FilterTitle>
-                            {product.color && product.color.length > 0 ? (
-                                product.color.map((c) => (
-                                    <FilterColor color={c} key={c} onClick={() => setColor(c)}/>
-                                ))
-                            ) : (
-                                <span>No colors available</span>
-                            )}
-                        </Filter>
-                        <Filter>
-                            <FilterTitle>Size</FilterTitle>
-                            <FilterSize onChange={(e) => setSize(e.target.value)}>
-                                {product.size && product.size.length > 0 ? (
-                                    product.size.map((s) => <FilterSizeOption>{s}</FilterSizeOption>)
-                                ) : <span>No sizes available</span>}
-                            </FilterSize>
-                        </Filter>
-                    </FilterContainer>
-                    <AddContainer>
-                        <AmountContainer>
-                            <Remove onClick={() => handleQuantity("dec")}/>
-                            <Amount>{quantity}</Amount>
-                            <Add onClick={() => handleQuantity("inc")}/>
-                        </AmountContainer>
-                        <Button onClick ={handleClick}>ADD TO CART</Button>
-                    </AddContainer>
-                    <ProductDescription>
-                        <h3>Details</h3>
-                        <span><p>Fit: {product.details?.fit}</p></span> 
-                        <span><p>Material&Care: {product.details?.materialAndCare}</p></span> 
-                        <span><p>Sleeve Length: {product.details?.sleeveLength}</p></span> 
-                        <span><p>Collar: {product.details?.collar}</p></span> 
-                        <span><p>Pattern: {product.details?.pattern}</p></span> 
-                        <span><p>Occasion: {product.details?.occasion}</p></span> 
-                    </ProductDescription>
-                </InfoContainer>
-            </Wrapper>
-            <Newsletter />
-            <Footer />
-        </Container>
-    );
+          {/* Thumbnail Images */}
+          {product.images?.length > 1 && (
+            <ThumbnailContainer>
+              {product.images.map((image, index) => (
+                <Thumbnail
+                  key={index}
+                  isActive={index === slideIndex}
+                  onClick={() => handleThumbnailClick(index)}
+                >
+                  <ThumbnailImage src={image} alt={`${product.title} ${index + 1}`} />
+                </Thumbnail>
+              ))}
+            </ThumbnailContainer>
+          )}
+        </ImageSection>
+
+        <InfoContainer>
+          <Title>{product.title}</Title>
+          <Desc>{product.desc}</Desc>
+          <Price>₹{product.price}</Price>
+
+          <AddContainer>
+            <GlassQuantityBox>
+              <QuantityButton onClick={() => handleQuantity("dec")}>−</QuantityButton>
+              <Amount>{quantity}</Amount>
+              <QuantityButton onClick={() => handleQuantity("inc")}>+</QuantityButton>
+            </GlassQuantityBox>
+            <Button onClick={handleClick}>ADD TO CART</Button>
+          </AddContainer>
+
+          <ProductDescription>
+            <h3>Product Details</h3>
+            <p><strong>Type:</strong> {product.categories?.join(", ")}</p>
+            <p><strong>Tags:</strong> {product.tags?.length ? product.tags.join(", ") : "N/A"}</p>
+            <p><strong>Material & Care:</strong> {product.details?.materialAndCare || "Soft acrylic yarn. Hand wash only."}</p>
+            <p><strong>Pattern:</strong> {product.details?.pattern || "Unique handcrafted design"}</p>
+            <p><strong>Occasion:</strong> {product.details?.occasion || "Everyday use, gifts, or decor"}</p>
+            <p><strong>Handmade:</strong> {product.handmade ? "Yes 🧶" : "No"}</p>
+          </ProductDescription>
+        </InfoContainer>
+      </Wrapper>
+      <Newsletter />
+      <Footer />
+    </Container>
+  );
 };
 
 export default Product;

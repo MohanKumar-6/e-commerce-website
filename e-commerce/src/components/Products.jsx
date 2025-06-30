@@ -1,50 +1,66 @@
-import styled from "styled-components"
-import { publicRequest } from "../requestMethods";
-import Product from "./Product"
+import styled from "styled-components";
+import { productFetch } from "../redux/apiCalls";
+import Product from "./Product";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
+// Styled Components
 const Container = styled.div`
-    Padding:20px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px 20px;
 `;
 
-const Products = ({ cat, filters, sort }) => {
-    const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([])
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  paddding: 20px;
+`;
 
-    useEffect(() => {
-        const getProducts = async () => {
-            try {
-                const res = await publicRequest.get(cat ? `/products?category=${cat}`
-                    : "/products"
-                );
-                console.log(res.data)
-                setProducts(res.data)
-            } catch (err) {
-                console.log(err)
-            }
-        }
-        getProducts()
-    }, [cat])
+const ViewMoreButton = styled(Link)`
+  margin-top: 30px;
+  margin-bottom: 20px;
+  padding: 12px 24px;
+  background-color: #ffc0cb;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 
-    useEffect(() => {
-        cat && setFilteredProducts(
-            products.filter((item) => Object.entries(filters).every(([key, value]) =>
-                item[key].includes(value)))
-        )
-    }, [cat, filters, products]) 
+  &:hover {
+    background-color: #ff7fa3;
+  }
+`;
 
-    return (
-        <Container>
-            { cat ? filteredProducts.map((item) => 
-                <Product item={item} key={item.id} />)
-                : products.slice(0,10).map((item) =>  
-                <Product item={item} key={item.id} />)
-            }
-        </Container>
-    )
-}
+const Products = () => {
+  const dispatch = useDispatch();
+  const products = useSelector((state) => state.product.products);
+  console.log(products);
+
+
+  useEffect(() => {
+    productFetch(dispatch);
+  }, []);
+
+
+
+  return (
+    <Wrapper>
+      <Container>
+        {products?.slice(0, 8).map((item) => (
+          <Product item={item} key={item._id || item.id} />
+        ))}
+      </Container>
+      <ViewMoreButton to="/products/:category">View More Products</ViewMoreButton>
+    </Wrapper>
+  );
+};
 
 export default Products;
