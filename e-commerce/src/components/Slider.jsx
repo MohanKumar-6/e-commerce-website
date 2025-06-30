@@ -1,6 +1,7 @@
 import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons'
 import styled from 'styled-components'
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { publicRequest } from '../requestMethods';
 
 const Container = styled.div`
@@ -335,10 +336,7 @@ const Slider = () => {
     const [touchStart, setTouchStart] = useState(0);
     const [touchEnd, setTouchEnd] = useState(0);
     const autoSlideRef = useRef(null);
-
-    const Navigate = () => {
-        window.location.href = "/products/:category";
-    }
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSliderItems = async () => {
@@ -368,7 +366,7 @@ const Slider = () => {
     }, [sliderItems.length]);
 
     const handleClickShow = () => {
-        Navigate()
+        navigate("/products/:category");
     }
 
     const handleClick = (direction) => {
