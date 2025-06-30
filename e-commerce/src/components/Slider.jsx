@@ -157,6 +157,33 @@ const Image = styled.img`
     }
 `;
 
+const LoadingScreen = styled.div`
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #ff6b9d; 
+    font-weight: 600;
+    background-color: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    @media (max-width: 768px) {
+        font-size: 20px;
+    }
+    @media (max-width: 480px) {
+        font-size: 18px;
+    }
+`;
+
 const InfoContainer = styled.div`
     flex: 1;
     padding: 50px;
@@ -426,7 +453,7 @@ const Slider = () => {
     };
 
     if (sliderItems.length === 0) {
-        return <Container>Loading...</Container>;
+        return <LoadingScreen>Loading...</LoadingScreen>;
     }
 
     return (

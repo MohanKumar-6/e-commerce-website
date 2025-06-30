@@ -1,4 +1,4 @@
-import { Add, Remove } from "@material-ui/icons";
+import { Add, Remove, Delete } from "@material-ui/icons";
 import styled from "styled-components";
 import Announcement from "../components/Announcement";
 import Footer from "../components/Footer";
@@ -8,7 +8,7 @@ import StripeCheckout from "react-stripe-checkout";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { userRequest } from "../requestMethods";
-import { updateQuantity } from "../redux/cartRedux";
+import { updateQuantity, removeProduct } from "../redux/cartRedux";
 
 const KEY = process.env.REACT_APP_STRIPE;
 
@@ -108,6 +108,12 @@ const TopButton = styled.button`
         : "rgba(255, 127, 163, 0.1)"};
   }
 
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   @media (max-width: 768px) {
     padding: 10px 20px;
     font-size: 12px;
@@ -193,6 +199,7 @@ const ProductCard = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   align-items: center;
+  position: relative;
 
   &:hover {
     transform: translateY(-2px);
@@ -209,6 +216,39 @@ const ProductCard = styled.div`
   @media (max-width: 480px) {
     padding: 12px;
     gap: 12px;
+  }
+`;
+
+const DeleteButton = styled.button`
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 99, 132, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #ff6384;
+
+  &:hover {
+    background: rgba(255, 99, 132, 0.2);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    position: static;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -478,6 +518,12 @@ const CheckoutButton = styled.button`
     transform: translateY(0);
   }
 
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   @media (max-width: 768px) {
     padding: 12px;
     font-size: 15px;
@@ -518,14 +564,33 @@ const EmptyCart = styled.div`
   }
 `;
 
+const LoadingSpinner = styled.div`
+  border: 3px solid rgba(255, 182, 193, 0.3);
+  border-top: 3px solid #ff91a4;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
   const [stripeToken, setStripeToken] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const dispatch = useDispatch();
 
-  const onToken = (token) => setStripeToken(token);
+  const onToken = (token) => {
+    setStripeToken(token);
+    setIsProcessing(true);
+  };
 
   useEffect(() => {
     const makeRequest = async () => {
@@ -536,14 +601,47 @@ const Cart = () => {
         });
         navigate("/success", { state: res.data });
       } catch (err) {
-        console.error(err);
+        console.error("Payment failed:", err);
+        alert("Payment failed. Please try again.");
+      } finally {
+        setIsProcessing(false);
+        setStripeToken(null);
       }
     };
-    stripeToken && cart.total > 0 && makeRequest();
+    
+    if (stripeToken && cart.total > 0) {
+      makeRequest();
+    }
   }, [stripeToken, cart.total, navigate]);
 
   const changeQuantity = (productId, type) => {
     dispatch(updateQuantity({ productId, type }));
+  };
+
+  const handleDeleteProduct = (productId) => {
+    if (window.confirm("Are you sure you want to remove this item from your cart?")) {
+      dispatch(removeProduct(productId));
+    }
+  };
+
+  const handleCheckoutClick = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    
+    if (cart.products.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+    
+    if (cart.total <= 0) {
+      alert("Invalid cart total!");
+      return;
+    }
+
+    // If using Stripe, the StripeCheckout component will handle the rest
+    // If not using Stripe, you can add custom checkout logic here
   };
 
   return (
@@ -558,7 +656,13 @@ const Cart = () => {
             <TopText>Shopping Bag ({cart.quantity})</TopText>
             <TopText>Your Wishlist (0)</TopText>
           </TopTexts>
-          <TopButton filled>Checkout Now</TopButton>
+          <TopButton 
+            filled 
+            onClick={handleCheckoutClick}
+            disabled={cart.products.length === 0 || isProcessing}
+          >
+            {isProcessing ? "Processing..." : "Checkout Now"}
+          </TopButton>
         </Top>
         
         {cart.products.length === 0 ? (
@@ -572,6 +676,9 @@ const Cart = () => {
             <Info>
               {cart.products.map((prod) => (
                 <ProductCard key={prod._id}>
+                  <DeleteButton onClick={() => handleDeleteProduct(prod._id)}>
+                    <Delete style={{ fontSize: 18 }} />
+                  </DeleteButton>
                   <ProductImage src={prod.thumbnail} alt={prod.title} />
                   <Details>
                     <ProductName>{prod.title}</ProductName>
@@ -612,6 +719,7 @@ const Cart = () => {
                 <span>Total</span>
                 <span>₹{cart.total}</span>
               </SummaryItem>
+              
               {user ? (
                 <StripeCheckout
                   name="Deccan Threads"
@@ -621,8 +729,18 @@ const Cart = () => {
                   amount={cart.total * 100}
                   token={onToken}
                   stripeKey={KEY}
+                  disabled={isProcessing || cart.products.length === 0}
                 >
-                  <CheckoutButton>Checkout Now</CheckoutButton>
+                  <CheckoutButton disabled={isProcessing || cart.products.length === 0}>
+                    {isProcessing ? (
+                      <>
+                        <LoadingSpinner />
+                        Processing...
+                      </>
+                    ) : (
+                      "Checkout Now"
+                    )}
+                  </CheckoutButton>
                 </StripeCheckout>
               ) : (
                 <CheckoutButton onClick={() => navigate("/login")}>
